@@ -1,7 +1,7 @@
 from postgres import Postgres
 
 
-class PostgresConnection(object):
+class PostgresConnection:
 
     def __init__(self, config):
         self._config = config
