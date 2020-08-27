@@ -1,9 +1,8 @@
+class NotasRepository:
+    def __init__(self, connection):
+        self._db = connection
 
-class Notas(object):
-    def __init__(self, database):
-        self._db = database.db
-
-    def get_notas(self, filial, serie, nota):
+    def get_tansactions_by_nota(self, filial, serie, nota):
         return self._db.all(
         f'''
         select 
@@ -20,9 +19,7 @@ class Notas(object):
         a.cliente_cod, 
         a.razao_social, 
         a.cliente_nome, 
-        a.vendedor, 
-        a.total as total_nota, 
-        a.liquido as liquido_nota, 
+        a.vendedor,
         a.condicao, 
         a.observacao, 
         a.observacao1, 
@@ -65,9 +62,7 @@ class Notas(object):
         NULL as cliente_cod, 
         NULL as razao_social, 
         NULL as cliente_nome, 
-        c.vendedor, 
-        c.total as total_nota, 
-        c.liquido as liquido_nota, 
+        c.vendedor,
         c.condicao, 
         c.obs as observacao,
         c.obs1 as observacao1, 
