@@ -3,6 +3,7 @@ import postgresql
 
 from app.resources.configurations import Configurations
 
+configs = Configurations()
 
 class Connection(ABC):
     def __init__(self):
@@ -14,11 +15,9 @@ class Connection(ABC):
 
 
 class PostgresConnection(Connection):
-    configs = Configurations().configs
-
     def __init__(self):
         super().__init__()
 
     def connect(self):
-        db = postgresql.open(f'pq://{self.configs["db_user"]}:{self.configs["db_passwd"]}@{self.configs["db_addr"]}:5432/{self.configs["db_name"]}')
+        db = postgresql.open(f'pq://{configs.postgres_string}')
         return db
