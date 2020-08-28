@@ -1,4 +1,4 @@
-name: bifrost
+name: BiFrost API
 version: 0.0.1
 author: Data Science
 db_addr: ${DATA_BASE_POSTGRES}
