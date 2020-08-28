@@ -10,8 +10,11 @@ pgnotify = "==0.1.1561372201"
 kafka-python = "==2.0.1"
 postgres = "==3.0.0"
 flask-restplus = "==0.13.0"
+dependency-injector = "==3.32.1"
 flask-cors = "==3.0.8"
 Werkzeug = "==0.16.1"
+file = "*"
+envyaml = "==0.2060"
 
 [requires]
 python_version = "3.8"

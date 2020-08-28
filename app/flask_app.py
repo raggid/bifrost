@@ -1,5 +1,4 @@
-import json
-import os
+from envyaml import EnvYAML
 from flask import Flask
 from flask_cors import CORS
 from flask_restplus import Api
@@ -7,11 +6,8 @@ from werkzeug.middleware.proxy_fix import ProxyFix
 
 application = Flask(__name__)
 
-workdir = os.getcwd()
-
-with open(workdir + '/metadata.json') as metadata:
-    version = json.load(metadata)['version']
+configs = EnvYAML('metadata.yaml')
 
 application.wsgi_app = ProxyFix(application.wsgi_app)
-api = Api(application, version=version, title='BiFrost API', description='Analytic Controller')
+api = Api(application, version=configs['version'], title=configs['name'], description='Analytic Controller')
 CORS(application)

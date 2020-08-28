@@ -1,0 +1,7 @@
+name: BiFrost API
+version: 0.0.1
+author: Data Science
+db_addr: ${DATA_BASE_POSTGRES}
+db_user: ${DATA_BASE_USER}
+db_passwd: ${DATA_BASE_PASSWD}
+db_name: ${DATA_BASE_NAME}
