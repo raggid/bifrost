@@ -5,10 +5,19 @@ from app.model.produto_nota import ProdutoNota
 class NotasRepository:
     db = PostgresConnection().connect()
 
-    def get_notas(self, filial, serie, nota):
+    def get_notas(self, tabela, filial, serie, nota):
         notas = []
-        ps = self.db.prepare(
-            f'''
+
+        ps = self.get_query_by_table(tabela, filial, serie, nota)
+
+        for record in ps.rows():
+            nota = ProdutoNota(*record)
+            notas.append(nota)
+        return notas
+
+    def get_query_by_table(self, tabela, filial, serie, nota):
+        if tabela == 'NFA057':
+            return self.db.prepare(f'''
                 select 
                 a.filial::INTEGER,
                 a.serie,
@@ -45,15 +54,14 @@ class NotasRepository:
                 b.total::DOUBLE PRECISION as total_item, 
                 b.liquido::DOUBLE PRECISION as liquido_item, 
                 b.total_liquido::DOUBLE PRECISION
-
+    
                 from nfa057 a
                 INNER JOIN nfa058 b
                 ON a.filial=b.filial and a.serie=b.serie and a.nota=b.nota and a.emissao=b.nota_emissao
                 where a.emissao BETWEEN to_date('01/08/2020','dd/mm/yyyy') AND current_date 
-                AND a.filial = {filial} AND a.serie = '{serie}' AND a.nota = {nota} 
-
-                UNION all
-
+                AND a.filial = {filial} AND a.serie = '{serie}' AND a.nota = {nota} ''')
+        else:
+            return self.db.prepare(f'''
                 select
                 c.filial::INTEGER, 
                 c.if as serie, 
@@ -96,7 +104,3 @@ class NotasRepository:
                 where c.data BETWEEN to_date('01/08/2020','dd/mm/yyyy') AND current_date 
                 AND c.filial = {filial} AND c.if = '{serie}' AND c.cupom = {nota};
                 ''')
-        for record in ps.rows():
-            nota = ProdutoNota(*record)
-            notas.append(nota)
-        return notas
