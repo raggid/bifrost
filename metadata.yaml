@@ -5,3 +5,4 @@ db_addr: ${DATA_BASE_POSTGRES}
 db_user: ${DATA_BASE_USER}
 db_passwd: ${DATA_BASE_PASSWD}
 db_name: ${DATA_BASE_NAME}
+notas_pg_channel: notas_channel
