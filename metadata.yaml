@@ -1,8 +1,12 @@
 name: BiFrost API
 version: 0.0.1
 author: Data Science
+filial: ${FILIAL}
 db_addr: ${DATA_BASE_POSTGRES}
 db_user: ${DATA_BASE_USER}
 db_passwd: ${DATA_BASE_PASSWD}
 db_name: ${DATA_BASE_NAME}
-pg_notify_channel: analytics-contrexp
+pg_notify_channel: 'notifyContrexp'
+kafka_server: ${KAFKA_ANALYTICS}
+topic_notas: 'venda'
+

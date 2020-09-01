@@ -58,8 +58,7 @@ class NotasRepository:
                 from nfa057 a
                 INNER JOIN nfa058 b
                 ON a.filial=b.filial and a.serie=b.serie and a.nota=b.nota and a.emissao=b.nota_emissao
-                where a.emissao BETWEEN to_date('01/08/2020','dd/mm/yyyy') AND current_date 
-                AND a.filial = {filial} AND a.serie = '{serie}' AND a.nota = {nota} ''')
+                where a.filial = {filial} AND a.serie = '{serie}' AND a.nota = {nota} ''')
         else:
             return self.db.prepare(f'''
                 select
@@ -101,6 +100,5 @@ class NotasRepository:
 
                 from ecfa209 c
                 INNER JOIN ecfa211 d on c.filial=d.filial and c.if=d.if and c.cupom=d.cupom and c.data=d.data
-                where c.data BETWEEN to_date('01/08/2020','dd/mm/yyyy') AND current_date 
-                AND c.filial = {filial} AND c.if = '{serie}' AND c.cupom = {nota};
+                where c.filial = {filial} AND c.if = '{serie}' AND c.cupom = {nota};
                 ''')

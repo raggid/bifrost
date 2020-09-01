@@ -1,20 +1,21 @@
+import json
+
 from pgnotify import await_pg_notifications
 from app.resources.configurations import Configurations
+from app.service.kafka_service import PgKafkaProducer
 from app.service.notas_service import NotasService
-import threading
-from threading import Event
 import logging
 import sys
-import signal
 
 configs = Configurations()
 service = NotasService()
+producer = PgKafkaProducer()
 
+topic_notas = configs.configs['topic_notas']
 
-class NotifListener:
+class PgListener:
 
-    def __init__(self, interrupt_event):
-        self.interrupt_event = interrupt_event
+    def __init__(self):
         logger = logging.getLogger('pg-notify-listener')
         ch = logging.StreamHandler(sys.stdout)
         ch.setLevel(logging.INFO)
@@ -24,39 +25,21 @@ class NotifListener:
         logger.setLevel(logging.INFO)
         self.logger = logger
 
-    def signal_term_handler(self, signal, frame):
-        self.logger.info("stopping listener")
-        # self.consumer.close()
-        sys.exit(0)
-
-    def interrupted_process(self, *args):
-        self.logger.info("stopping listener")
-        # self.consumer.close()
-        sys.exit(0)
-
     def _start(self):
         for notification in await_pg_notifications(
                 f'postgres://{configs.postgres_string}',
                 [f'{configs.configs["pg_notify_channel"]}']
         ):
-            payload = notification.payload
+            payload = json.loads(notification.payload)
             tabela = payload['reg_tabela']
             colunas = payload['reg_cols_pk'].split('|')
             valores = payload['reg_dados_pk'].split('|')
 
-            service.get_by_nota(tabela, valores[0], valores[1], valores[2])
-
-    def _run(self):
-        self.logger.info(" * The application is listening")
-        t = threading.Thread(target=self._start)
-        t.start()
+            self.logger.info(f'{tabela} updated')
+            self.logger.info('Sending to kafka')
+            produtos = service.get_by_nota(tabela, int(valores[1]), valores[2], int(valores[3]))
+            producer.produce(topic_notas, produtos)
+            print(produtos)
 
     def run(self):
-        self._run()
-
-
-INTERRUPT_EVENT = Event()
-listener = NotifListener(INTERRUPT_EVENT)
-
-
-
+        self._start()
