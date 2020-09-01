@@ -3,20 +3,20 @@ import datetime
 
 @dataclass
 class ProdutoNota:
-    filial: int = 0
-    serie: str = ''
-    nota: int = 0
-    emissao: datetime.date = datetime.date.today()
+    branch: int = 0
+    series: str = ''
+    note: int = 0
+    date: datetime.date = datetime.date.today()
     id_nota: str = ''
     es: str = ''
-    cliente_emp: int = 0
-    cliente_cod: int = 0
-    razao_social: str = ''
-    cliente_nome: str = ''
-    vendedor: int = 0
-    total_nota: float = 0.0
-    liquido_nota: float = 0.0
-    condicao: str = ''
+    client_company: int = 0
+    client_code: int = 0
+    corporate_name: str = ''
+    client_name: str = ''
+    salesman: int = 0
+    total_order: float = 0.0
+    liquid_order: float = 0.0
+    condition_payment: str = ''
     observacao: str = ''
     observacao1: str = ''
     observacao2: str = ''
@@ -24,13 +24,13 @@ class ProdutoNota:
     obs: str = ''
     tipo: str = ''
     desconto_valor: float = 0.0
-    desconto: float = 0
+    discount: float = 0
     fornecedor_emp: int = 0
-    fornecedor_cod: int = 0
-    produto: str = ''
+    provider_code: int = 0
+    product_code: str = ''
     id_produto: str = ''
-    quantidade: int = 0
-    unitario: float = 0.0
-    total_item: float = 0.0
-    liquido_item: float = 0.0
-    total_liquido: float = 0.0
+    quantity: int = 0
+    unit_price: float = 0.0
+    total_price: float = 0.0
+    liquid_unit_price: float = 0.0
+    liquid_total_price: float = 0.0
