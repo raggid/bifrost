@@ -5,6 +5,7 @@ from app.resources.configurations import Configurations
 
 configs = Configurations()
 
+
 class Connection(ABC):
     def __init__(self):
         pass

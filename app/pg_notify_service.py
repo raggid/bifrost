@@ -38,7 +38,10 @@ class PgListener:
             self.logger.info(f'{tabela} updated')
             self.logger.info('Sending to kafka')
             produtos = service.get_by_nota(tabela, int(valores[1]), valores[2], int(valores[3]))
-            producer.produce(topic_notas, produtos)
+
+            for value in produtos:
+                producer.produce(topic_notas, value)
+
             print(produtos)
 
     def run(self):
