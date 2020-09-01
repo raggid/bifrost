@@ -4,6 +4,7 @@ import sys
 
 from kafka import KafkaConsumer, KafkaProducer, TopicPartition
 from kafka.errors import KafkaError
+import jsonpickle
 
 from app.resources.configurations import Configurations
 
@@ -26,8 +27,8 @@ class PgKafkaProducer:
         self.logger = logger
 
     def produce(self, topic, data):
-        self.logger.info(f"Sending {data.id} to {topic}")
-        payload = json.dumps(data).encode('utf-8')
+        self.logger.info(f"Sending new data to {topic}")
+        payload = jsonpickle.encode(data, make_refs=False, unpicklable=False).encode('utf-8')
         future = self.producer.send(topic, payload)
         try:
             record_metadata = future.get(timeout=10)
@@ -35,8 +36,8 @@ class PgKafkaProducer:
             self.produce(topic, data)
             # self.logger.exception(KafkaError)
             pass
-        self.logger.info(f"Sent {data.id} to topic {record_metadata.topic} on offset {record_metadata.offset}")
-        return data.id
+        self.logger.info(f"Sent new data to topic {record_metadata.topic} on offset {record_metadata.offset}")
+        return data
 
 
 producer = PgKafkaProducer(bootstrap_servers=",".join([kafka_broker]),
