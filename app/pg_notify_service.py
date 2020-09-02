@@ -6,12 +6,12 @@ from app.service.kafka_service import PgKafkaProducer
 from app.service.notas_service import NotasService
 import logging
 import sys
+from app.service.kafka_service import producer
 
 configs = Configurations()
 service = NotasService()
-producer = PgKafkaProducer()
+# producer = PgKafkaProducer()
 
-topic_notas = configs.configs['topic_notas']
 
 class PgListener:
 
@@ -32,17 +32,15 @@ class PgListener:
         ):
             payload = json.loads(notification.payload)
             tabela = payload['reg_tabela']
-            colunas = payload['reg_cols_pk'].split('|')
             valores = payload['reg_dados_pk'].split('|')
 
+            topic, data = service.get_data(tabela, valores)
+
             self.logger.info(f'{tabela} updated')
-            self.logger.info('Sending to kafka')
-            produtos = service.get_by_nota(tabela, int(valores[1]), valores[2], int(valores[3]))
 
-            for value in produtos:
-                producer.produce(topic_notas, value)
-
-            print(produtos)
+            for value in data:
+                self.logger.info('Sending to kafka')
+                producer.produce(topic, value)
 
     def run(self):
         self._start()
