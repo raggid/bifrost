@@ -2,15 +2,12 @@ import json
 
 from pgnotify import await_pg_notifications
 from app.resources.configurations import Configurations
-from app.service.kafka_service import PgKafkaProducer
 from app.service.notas_service import NotasService
 import logging
 import sys
-from app.service.kafka_service import producer
 
 configs = Configurations()
 service = NotasService()
-# producer = PgKafkaProducer()
 
 
 class PgListener:
@@ -34,13 +31,8 @@ class PgListener:
             tabela = payload['reg_tabela']
             valores = payload['reg_dados_pk'].split('|')
 
-            topic, data = service.get_data(tabela, valores)
-
-            self.logger.info(f'{tabela} updated')
-
-            for value in data:
-                self.logger.info('Sending to kafka')
-                producer.produce(topic, value)
+            if tabela == 'NFA057':
+                service.process(tabela, valores)
 
     def run(self):
         self._start()

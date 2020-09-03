@@ -29,6 +29,7 @@ class ProdutoNota:
     discount: float = 0
     fornecedor_emp: int = 0
     provider_code: int = 0
+    provider_name: str = ''
     product_code: str = ''
     id_produto: str = ''
     product_name: str = ''
