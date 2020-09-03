@@ -16,6 +16,12 @@ where recnum in (1, 2, 11,10000001);
 INSERT INTO public.cfma017 (recnum, id_conferencia, id_produto, id_palete, id_coleta, filial_origem, filial_destino, chave_nfe, qtd_conferida, qtd_palete, situacao, log, log_hora, log_data)
 VALUES(10000002, 28900000007227, 28000000014682, 2800005499, 28000000002077, 28, 34, '2800381646', 1, 1, 'FC', 'daniel', 10.40, '2016-10-19');
 
+
+SELECT * from NFA057 A
+INNER JOIN nfa058 B ON A.FILIAL = B.FILIAL AND A.SERIE = B.SERIE AND A.NOTA = B.NOTA
+WHERE A.FILIAL = 38 AND A.SERIE = '081' AND A.NOTA = 165929;
+
+
 begin;
 
 create or replace function notify_contrexp ()

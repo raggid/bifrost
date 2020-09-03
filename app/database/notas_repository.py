@@ -19,6 +19,12 @@ class NotasRepository:
         if tabela == 'NFA057':
             return self.db.prepare(f'''
                 select 
+                    a.filial||'___'||
+                    a.serie||'___'||
+                    a.nota||'___'|| 
+                    a.emissao||'___'||
+                    b.fornecedor_cod||'___'||
+                    b.produto as id_nota_produto,
                     a.filial::INTEGER,
                     a.serie,
                     a.nota::INTEGER, 
@@ -56,7 +62,7 @@ class NotasRepository:
                     b.unitario::DOUBLE PRECISION, 
                     b.total::DOUBLE PRECISION as total_item, 
                     b.liquido::DOUBLE PRECISION as liquido_item, 
-                    b.total_liquido::DOUBLE PRECISION    
+                    b.total_liquido::DOUBLE PRECISION
                 from nfa057 a
                 INNER JOIN nfa058 b ON a.filial=b.filial 
                     and a.serie=b.serie and a.nota=b.nota and a.emissao=b.nota_emissao

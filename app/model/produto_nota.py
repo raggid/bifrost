@@ -4,6 +4,7 @@ import datetime
 
 @dataclass
 class ProdutoNota:
+    invoice_id: str = ''
     branch: int = 0
     series: str = ''
     note: int = 0
