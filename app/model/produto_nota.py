@@ -1,13 +1,16 @@
 from dataclasses import dataclass
 import datetime
 
+
 @dataclass
 class ProdutoNota:
+    invoice_id: str = ''
     branch: int = 0
     series: str = ''
     note: int = 0
     date: datetime.date = datetime.date.today()
     id_nota: str = ''
+    city: str = ''
     es: str = ''
     client_company: int = 0
     client_code: int = 0
@@ -27,8 +30,10 @@ class ProdutoNota:
     discount: float = 0
     fornecedor_emp: int = 0
     provider_code: int = 0
+    provider_name: str = ''
     product_code: str = ''
     id_produto: str = ''
+    product_name: str = ''
     quantity: int = 0
     unit_price: float = 0.0
     total_price: float = 0.0

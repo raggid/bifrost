@@ -1,8 +1,7 @@
-import json
 import logging
 import sys
 
-from kafka import KafkaConsumer, KafkaProducer, TopicPartition
+from kafka import KafkaProducer
 from kafka.errors import KafkaError
 import jsonpickle
 
@@ -11,7 +10,7 @@ from app.resources.configurations import Configurations
 configs = Configurations()
 
 filial = configs.configs['filial']
-kafka_broker = f"{configs.configs['kafka_server']}:9092"
+kafka_broker = f"{configs.configs['kafka_server']}:6667"
 
 
 class PgKafkaProducer:
@@ -34,13 +33,12 @@ class PgKafkaProducer:
             record_metadata = future.get(timeout=10)
         except KafkaError:
             self.produce(topic, data)
-            # self.logger.exception(KafkaError)
             pass
         self.logger.info(f"Sent new data to topic {record_metadata.topic} on offset {record_metadata.offset}")
         return data
 
 
 producer = PgKafkaProducer(bootstrap_servers=",".join([kafka_broker]),
-                              client_id=f"filial-{filial}"
-                              # max_request_size=10000000
+                              client_id=f"filial-{filial}",
+                              max_request_size=10000000
                               )
