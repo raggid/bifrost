@@ -1,22 +1,24 @@
 from app.database.connections import PostgresConnection
-from app.model.produto_nota import ProdutoNota
+from app.model.produto_nota import NoteProduct, Note
 
 
-class NotasRepository:
+class NotesRepository:
     db = PostgresConnection().connect()
 
-    def get_notas(self, tabela, filial, serie, nota):
-        notas = []
+    def get_note(self, table, branch, series, note):
 
-        ps = self.get_query_by_table(tabela, filial, serie, nota)
+        ps = self.get_query_by_table(table, branch, series, note)
+        invoice = Note(*ps()[0])
 
-        for record in ps.rows():
-            nota = ProdutoNota(*record)
-            notas.append(nota)
-        return notas
+        # if invoice is not None:
+        #     ps = self.get_products_by_note(table, branch, series, note)
+        #     for record in ps.rows():
+        #         product = NoteProduct(*record)
+        #         invoice.products.append(product)
+        return invoice
 
-    def get_query_by_table(self, tabela, filial, serie, nota):
-        if tabela == 'NFA057':
+    def get_query_by_table(self, table, branch, series, note):
+        if table == 'NFA057':
             return self.db.prepare(f'''
                 select 
                     a.filial::INTEGER,
@@ -36,7 +38,7 @@ class NotasRepository:
                     a.vendedor::INTEGER, 
                     a.total::DOUBLE PRECISION as total_nota, 
                     a.liquido::DOUBLE PRECISION as liquido_nota, 
-                    a.condicao, 
+                    d.nome as condicao,
                     a.observacao, 
                     a.observacao1, 
                     a.observacao2, 
@@ -44,22 +46,11 @@ class NotasRepository:
                     a.obs,
                     'NFE' AS tipo,
                     NULL as desconto_valor,
-                    NULL as desconto,
-                    b.fornecedor_emp::INTEGER,
-                    b.fornecedor_cod::INTEGER,
-                    b.produto, 
-                    b.fornecedor_cod||'___'||
-                    b.produto as id_produto,
-                    b.produto_desc as nome_produto,
-                    b.quantidade::INTEGER, 
-                    b.unitario::DOUBLE PRECISION, 
-                    b.total::DOUBLE PRECISION as total_item, 
-                    b.liquido::DOUBLE PRECISION as liquido_item, 
-                    b.total_liquido::DOUBLE PRECISION    
+                    NULL as desconto
                 from nfa057 a
-                INNER JOIN nfa058 b ON a.filial=b.filial and a.serie=b.serie and a.nota=b.nota and a.emissao=b.nota_emissao
                 INNER JOIN ags022 c on a.filial = c.codigo
-                where a.filial = {filial} AND a.serie = '{serie}' AND a.nota = {nota} ''')
+                INNER JOIN ags039 d on a.condicao = d.codigo
+                where a.filial = {branch} AND a.serie = '{series}' AND a.nota = {note} ''')
         # else:
         #     return self.db.prepare(f'''
         #         select
@@ -103,3 +94,36 @@ class NotasRepository:
         #         INNER JOIN ecfa211 d on c.filial=d.filial and c.if=d.if and c.cupom=d.cupom and c.data=d.data
         #         where c.filial = {filial} AND c.if = '{serie}' AND c.cupom = {nota};
         #         ''')
+
+    def get_products(self, table, invoice):
+        ps = self.get_products_by_note(table, invoice.branch, invoice.series, invoice.note)
+        products = [NoteProduct(*row) for row in ps.rows()]
+        return products
+
+    def get_products_by_note(self, table, branch, series, note):
+        if table == 'NFA057':
+            return self.db.prepare(f'''
+                select
+                    b.filial::INTEGER,
+                    b.serie,
+                    b.nota::INTEGER,
+                    b.nota_emissao as emissao,
+                    b.filial||'___'||
+                    b.serie||'___'||
+                    b.nota||'___'|| 
+                    b.nota_emissao as id_nota,
+                    b.fornecedor_emp::INTEGER,
+                    b.fornecedor_cod::INTEGER,
+                    e.nome as fornecedor,
+                    b.produto, 
+                    b.fornecedor_cod||'___'||
+                    b.produto as id_produto,
+                    b.produto_desc as nome_produto,
+                    b.quantidade::INTEGER, 
+                    b.unitario::DOUBLE PRECISION, 
+                    b.total::DOUBLE PRECISION as total_item, 
+                    b.liquido::DOUBLE PRECISION as liquido_item, 
+                    b.total_liquido::DOUBLE PRECISION    
+                from nfa058 b                
+                INNER JOIN ags031 e on b.fornecedor_cod = e.codigo and b.fornecedor_emp = e.empresa
+                where b.filial = {branch} AND b.serie = '{series}' AND b.nota = {note} ''')

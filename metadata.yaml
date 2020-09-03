@@ -8,5 +8,6 @@ db_passwd: ${DATA_BASE_PASSWD}
 db_name: ${DATA_BASE_NAME}
 pg_notify_channel: 'notifyContrexp'
 kafka_server: ${KAFKA_ANALYTICS}
-topic_notas: 'venda'
+notes_topic: 'venda'
+products_topic: 'itens'
 

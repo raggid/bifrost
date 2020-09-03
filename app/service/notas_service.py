@@ -1,15 +1,21 @@
-from app.database.notas_repository import NotasRepository
+from app.database.notas_repository import NotesRepository
 from app.resources.configurations import Configurations
+
+from app.service.kafka_service import producer
 
 
 class NotasService:
     configs = Configurations()
-    topic_notas = configs.configs['topic_notas']
-    repo = NotasRepository()
+    notes_topic = configs.configs['notes_topic']
+    products_topic = configs.configs['products_topic']
+    repo = NotesRepository()
 
-    def get_data(self, tabela, valores):
-        return self.topic_notas, self.get_by_nota(tabela, int(valores[1]), valores[2], int(valores[3]))
+    def process(self, table, values):
+        note = self.repo.get_note(table, int(values[1]), values[2], int(values[3]))
 
-    def get_by_nota(self, tabela, filial, serie, nota):
-        produtos = self.repo.get_notas(tabela, filial, serie, nota)
-        return produtos
+        if note is not None:
+            products = self.repo.get_products(table, note)
+
+            producer.produce(self.notes_topic, note)
+            for product in products:
+                producer.produce(self.products_topic, product)
