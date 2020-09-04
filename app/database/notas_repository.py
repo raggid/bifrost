@@ -71,3 +71,59 @@ class NotasRepository:
                 INNER JOIN ags039 e ON a.condicao = e.codigo
                 where a.filial = {filial} AND a.serie = '{serie}' AND a.nota = {nota} 
                     and a.es = 'S' and a.transf_destino = 0 ''')
+        elif tabela == 'ECFA209':
+            return self.db.prepare(f'''
+                select
+                    a.filial||'___'||
+                    a.if||'___'||
+                    a.cupom||'___'||
+                    a.filial||'___'||
+                    b.fornecedor_cod||'___'||
+                    b.produto as id_nota_produto,
+                    a.filial::INTEGER,
+                    a.if as serie, 
+                    a.cupom::INTEGER as nota, 
+                    a.data as emissao,
+                    a.filial||'___'||
+                    a.if||'___'||
+                    a.cupom||'___'||
+                    a.data as id_nota,
+                    c.cidade,
+                    'S' as es,
+                    NULL as cliente_emp, 
+                    NULL as cliente_cod, 
+                    'CONSUMIDOR FINAL' as razao_social, 
+                    'CONSUMIDOR FINAL' as cliente_nome, 
+                    a.vendedor::INTEGER, 
+                    a.total::DOUBLE PRECISION as total_nota, 
+                    a.liquido::DOUBLE PRECISION as liquido_nota, 
+                    e.nome as condicao, 
+                    a.obs as observacao,
+                    a.obs1 as observacao1, 
+                    NULL as observacao2, 
+                    NULL as observacao3, 
+                    NULL as obs,
+                    'NFCE' AS tipo,
+                    a.desconto_valor, 
+                    a.desconto, 
+                    b.fornecedor_emp::INTEGER, 
+                    b.fornecedor_cod::INTEGER, 
+                    d.nome as fornecedor,
+                    b.produto,
+                    b.fornecedor_cod||'___'||
+                    b.produto as id_produto,
+                    b.produto_desc as nome_produto,
+                    b.quantidade::INTEGER, 
+                    b.unitario::DOUBLE PRECISION, 
+                    b.total::DOUBLE PRECISION as total_item, 
+                    b.liquido::DOUBLE PRECISION as liquido_item, 
+                    b.total_liquido::DOUBLE PRECISION                  
+                from ecfa209 a
+                INNER JOIN ecfa211 b on a.filial=b.filial and a.if=b.if and a.cupom=b.cupom and a.data=b.data
+                INNER JOIN ags022 c on a.filial = c.codigo
+                INNER JOIN ags031 d ON b.fornecedor_cod = d.codigo and b.fornecedor_emp = d.empresa
+                INNER JOIN ags039 e ON a.condicao = e.codigo
+                where a.filial = {filial} AND a.if = '{serie}' AND a.cupom = {nota} 
+                ''')
+
+

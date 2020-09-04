@@ -31,7 +31,7 @@ class PgListener:
             tabela = payload['reg_tabela']
             valores = payload['reg_dados_pk'].split('|')
 
-            if tabela == 'NFA057':
+            if tabela in ('NFA057', 'ECFA209'):
                 service.process(tabela, valores)
 
     def run(self):
