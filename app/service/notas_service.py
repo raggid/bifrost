@@ -11,7 +11,10 @@ class NotasService:
     repo = NotasRepository()
 
     def process(self, tabela, valores):
-        products = self.get_by_nota(tabela, int(valores[1]), valores[2], int(valores[3]))
+        if tabela == 'NFA057':
+            products = self.get_by_nota(tabela, int(valores[1]), valores[2], int(valores[3]))
+        elif tabela == 'ECFA209':
+            products = self.get_by_nota(tabela, int(valores[1]), valores[2], int(valores[4]))
         for product in products:
             producer.produce(self.topic_notas, product)
 
