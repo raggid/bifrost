@@ -8,8 +8,12 @@ verify_ssl = true
 [packages]
 pgnotify = "==0.1.1561372201"
 kafka-python = "==2.0.1"
-postgres = "==3.0.0"
 flask-restplus = "==0.13.0"
+flask-cors = "==3.0.8"
+Werkzeug = "==0.16.1"
+envyaml = "==0.2060"
+jsonpickle = "==1.4.1"
+py-postgresql = "==1.2.1"
 
 [requires]
 python_version = "3.8"
